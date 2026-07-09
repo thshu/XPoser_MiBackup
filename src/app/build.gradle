@@ -12,7 +12,7 @@ android {
         minSdk 28
         targetSdk 36
         versionCode 260707
-        versionName "1.0"
+        versionName "1.1"
     }
 
     buildTypes {
@@ -30,6 +30,7 @@ android {
             // the Android Gradle plugin. To learn more, go to the section about
             // R8 configuration files.
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 
@@ -41,6 +42,12 @@ android {
         release {
             v1SigningEnabled true
             v2SigningEnabled true
+            release {
+                storeFile file(System.getenv("KEYSTORE_FILE_PATH") ?: "debug.keystore")
+                storePassword System.getenv("KEYSTORE_PASSWORD")
+                keyAlias System.getenv("KEY_ALIAS")
+                keyPassword System.getenv("KEY_PASSWORD")
+            }
         }
     }
 
@@ -59,6 +66,20 @@ android {
     lint {
         abortOnError false
     }
+
+    testOptions {
+        unitTests.all {
+            useJUnitPlatform()   // 启用 JUnit 5 平台
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            // 示例：AppName_版本号_构建类型.apk
+            def newApkName = "云备份助手_${variant.versionName}_${variant.buildType.name}.apk"
+            output.outputFileName = newApkName
+        }
+    }
 }
 
 dependencies {
@@ -67,4 +88,15 @@ dependencies {
 
     implementation 'com.hierynomus:smbj:0.13.0'
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+
+    // JUnit 5 核心 API
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
+    // JUnit 5 测试引擎（运行时执行测试）
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
+    // JUnit Platform Launcher（Gradle 启动测试所需）
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Mockito（静态方法模拟）
+    testImplementation 'org.mockito:mockito-core:5.7.0'
+    testImplementation 'org.mockito:mockito-inline:5.2.0'
 }
