@@ -97,6 +97,7 @@ public class WebdavFileHelp {
     public static boolean testConnection() throws Exception {
         var url = baseUrl();
         var res = propfind(url, 0);
+        Log.d(TAG, "testConnection: 返回状态码：" + res[0]);
         return Integer.parseInt(res[0]) == HTTP_MULTISTATUS;
     }
 
