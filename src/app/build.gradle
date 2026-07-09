@@ -42,12 +42,11 @@ android {
         release {
             v1SigningEnabled true
             v2SigningEnabled true
-            release {
-                storeFile file(System.getenv("KEYSTORE_FILE_PATH") ?: "debug.keystore")
-                storePassword System.getenv("KEYSTORE_PASSWORD")
-                keyAlias System.getenv("KEY_ALIAS")
-                keyPassword System.getenv("KEY_PASSWORD")
-            }
+            storeFile file(System.getenv("KEYSTORE_FILE_PATH") ?: "debug.keystore")
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            keyAlias System.getenv("KEY_ALIAS")
+            keyPassword System.getenv("KEY_PASSWORD")
+
         }
     }
 
