@@ -53,7 +53,7 @@ public class BackupHook {
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                     // 测试云端连接是否可达
                     if (!com.zgcwkj.comm.CloudFileHelp.testConnection()) {
-                        Log.d(TAG, "beforeHookedMethod: 云端链接不可用");
+                        XposedBridge.log(TAG + "beforeHookedMethod: 云端链接不可用" + lpparam.packageName);
                         return;
                     }
                     // 阻止原始doConnect执行
@@ -73,7 +73,7 @@ public class BackupHook {
                     var notifyMethod = clazz.getDeclaredMethod("notifyConnectSuccess");
                     notifyMethod.setAccessible(true);
                     notifyMethod.invoke(connector);
-                    Log.d(TAG, "beforeHookedMethod: 拦截DFS连接流程执行完毕");
+                    XposedBridge.log(TAG + "beforeHookedMethod: 拦截DFS连接流程执行完毕" + lpparam.packageName);
                 }
             });
         } catch (Throwable ignored) {}
@@ -91,7 +91,7 @@ public class BackupHook {
             XposedHelpers.findAndHookMethod(clazz, "notifyNASConnectSuccess", new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    Log.d(TAG, "afterHookedMethod: 开始强制设置NAS连接状态");
+                    XposedBridge.log(TAG + ": afterHookedMethod: 开始强制设置NAS连接状态" + lpparam.packageName);
                     var instance = param.thisObject;
                     XposedHelpers.setObjectField(instance, "mNASisConnected", true);
                     // 若mDeviceInfo为空，通过Unsafe分配mock PathInfo填充磁盘信息
@@ -131,7 +131,7 @@ public class BackupHook {
                             XposedHelpers.setObjectField(instance, "mDistFileClient", mockClient);
                         }
                     }
-                    Log.d(TAG, "afterHookedMethod: 拦截DistFileClientService单例执行完毕");
+                    XposedBridge.log(TAG + "afterHookedMethod: 拦截DistFileClientService单例执行完毕" + lpparam.packageName);
                 }
             });
         } catch (Throwable ignored) {}
