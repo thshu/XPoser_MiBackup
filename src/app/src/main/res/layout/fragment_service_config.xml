@@ -243,6 +243,13 @@
             android:text="保存配置"
             android:backgroundTint="@color/primary" />
 
+        <Button
+            android:id="@+id/test_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试链接"
+            android:backgroundTint="@color/primary" />
+
         <TextView
             android:id="@+id/tv_footer"
             android:layout_width="wrap_content"

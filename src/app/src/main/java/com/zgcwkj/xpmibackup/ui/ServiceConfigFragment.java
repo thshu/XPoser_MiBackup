@@ -53,6 +53,7 @@ public class ServiceConfigFragment extends Fragment {
         etWebdavUser = view.findViewById(R.id.et_webdav_user);
         etWebdavPass = view.findViewById(R.id.et_webdav_pass);
         var btnSave = view.findViewById(R.id.btn_save);
+        var btnTest = view.findViewById(R.id.test_btn);
 
         // 加载配置
         loadConfig();
@@ -72,6 +73,11 @@ public class ServiceConfigFragment extends Fragment {
         btnSave.setOnClickListener(v -> {
             saveConfig();
             Toast.makeText(getActivity(), "配置已保存", Toast.LENGTH_SHORT).show();
+        });
+        // 点击事件
+        btnTest.setOnClickListener(v -> {
+            var available = com.zgcwkj.comm.CloudFileHelp.testConnection();
+            Toast.makeText(getActivity(), available?"链接可用":"无法链接", Toast.LENGTH_SHORT).show();
         });
 
         // 底部链接
