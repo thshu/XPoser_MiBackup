@@ -1,5 +1,7 @@
 package com.zgcwkj.xpmibackup.hook;
 
+import android.util.Log;
+
 import com.zgcwkj.comm.ConfigHelp;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -50,7 +52,10 @@ public class BackupHook {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                     // 测试云端连接是否可达
-                    if (!com.zgcwkj.comm.CloudFileHelp.testConnection()) return;
+                    if (!com.zgcwkj.comm.CloudFileHelp.testConnection()) {
+                        Log.d(TAG, "beforeHookedMethod: 云端链接不可用");
+                        return;
+                    }
                     // 阻止原始doConnect执行
                     param.setResult(null);
                     // 构造mock客户端并设置连接状态为CONNECTED
@@ -68,6 +73,7 @@ public class BackupHook {
                     var notifyMethod = clazz.getDeclaredMethod("notifyConnectSuccess");
                     notifyMethod.setAccessible(true);
                     notifyMethod.invoke(connector);
+                    Log.d(TAG, "beforeHookedMethod: 拦截DFS连接流程执行完毕");
                 }
             });
         } catch (Throwable ignored) {}
@@ -85,6 +91,7 @@ public class BackupHook {
             XposedHelpers.findAndHookMethod(clazz, "notifyNASConnectSuccess", new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    Log.d(TAG, "afterHookedMethod: 开始强制设置NAS连接状态");
                     var instance = param.thisObject;
                     XposedHelpers.setObjectField(instance, "mNASisConnected", true);
                     // 若mDeviceInfo为空，通过Unsafe分配mock PathInfo填充磁盘信息
@@ -124,6 +131,7 @@ public class BackupHook {
                             XposedHelpers.setObjectField(instance, "mDistFileClient", mockClient);
                         }
                     }
+                    Log.d(TAG, "afterHookedMethod: 拦截DistFileClientService单例执行完毕");
                 }
             });
         } catch (Throwable ignored) {}
