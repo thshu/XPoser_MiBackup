@@ -15,6 +15,22 @@ android {
         versionName "1.1"
     }
 
+    signingConfigs {
+        debug {
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+        release {
+            v1SigningEnabled true
+            v2SigningEnabled true
+            storeFile file(System.getenv("KEYSTORE_FILE_PATH") ?: "debug.keystore")
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            keyAlias System.getenv("KEY_ALIAS")
+            keyPassword System.getenv("KEY_PASSWORD")
+
+        }
+    }
+
     buildTypes {
         release {
             // 代码混淆
@@ -34,21 +50,7 @@ android {
         }
     }
 
-    signingConfigs {
-        debug {
-            v1SigningEnabled true
-            v2SigningEnabled true
-        }
-        release {
-            v1SigningEnabled true
-            v2SigningEnabled true
-            storeFile file(System.getenv("KEYSTORE_FILE_PATH") ?: "debug.keystore")
-            storePassword System.getenv("KEYSTORE_PASSWORD")
-            keyAlias System.getenv("KEY_ALIAS")
-            keyPassword System.getenv("KEY_PASSWORD")
 
-        }
-    }
 
     packaging {
         resources {
