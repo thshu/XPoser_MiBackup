@@ -2,6 +2,7 @@ package com.zgcwkj.xpmibackup.ui;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,8 +77,27 @@ public class ServiceConfigFragment extends Fragment {
         });
         // 点击事件
         btnTest.setOnClickListener(v -> {
-            var available = com.zgcwkj.comm.CloudFileHelp.testConnection();
-            Toast.makeText(getActivity(), available?"链接可用":"无法链接", Toast.LENGTH_SHORT).show();
+            // 禁用按钮，防止重复点击（可选）
+            btnTest.setEnabled(false);
+
+            new Thread(() -> {
+                boolean available;
+                try {
+                    available = com.zgcwkj.comm.CloudFileHelp.testConnection();
+                } catch (Exception e) {
+                    available = false;
+                    // 可记录错误日志
+                    Log.e("WebDAV", "testConnection error", e);
+                }
+                boolean finalAvailable = available;
+                // 切回主线程显示 Toast
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        Toast.makeText(getActivity(), finalAvailable ? "链接可用" : "无法链接", Toast.LENGTH_SHORT).show();
+                        btnTest.setEnabled(true); // 恢复按钮
+                    });
+                }
+            }).start();
         });
 
         // 底部链接
