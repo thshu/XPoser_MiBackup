@@ -93,13 +93,3 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:5.7.0'
     testImplementation 'org.mockito:mockito-inline:5.2.0'
 }
-
-androidComponents {
-    onVariants(selector().all()) { variant ->
-        variant.outputs.configureEach { output ->
-            output.outputFileName.set(
-                    "云备份助手_${variant.versionName}_${variant.buildType.name}.apk"
-            )
-        }
-    }
-}
